@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://belw3mvkg448y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_luqcs"]
+shading_mode = 0
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.80702, 0.87179, 0.997841, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4fp7x"]
+material = SubResource("StandardMaterial3D_luqcs")
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.5
+radial_segments = 32
+
+[node name="Tube light" type="Node3D"]
+
+[node name="structure" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_4fp7x")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0527192, -2.30443e-09)
+light_energy = 2.03
+light_bake_mode = 1
+shadow_enabled = true
+shadow_normal_bias = 1.707
+omni_range = 25.198

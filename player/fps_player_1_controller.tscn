@@ -1,0 +1,84 @@
+[gd_scene load_steps=8 format=3 uid="uid://8pv5dj2wmaf0"]
+
+[ext_resource type="Script" uid="uid://cok0pia0ihhvo" path="res://player/player_controller.gd" id="1_iki0w"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iki0w"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_28lys"]
+lightmap_size_hint = Vector2i(17, 14)
+add_uv2 = true
+radial_segments = 20
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4lhob"]
+height = 1.4
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_iki0w"]
+
+[sub_resource type="Animation" id="Animation_jjo6d"]
+resource_name = "crouch"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_k1axc"]
+_data = {
+&"crouch": SubResource("Animation_jjo6d")
+}
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+script = ExtResource("1_iki0w")
+sensitivity = 0.14
+lerp_speed = 13.0
+
+[node name="un_crouched_collision_shape" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_iki0w")
+debug_color = Color(2.69532e-06, 0.791304, 0.92051, 0.42)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="un_crouched_collision_shape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0079298, -2.38419e-07, 0.00433207)
+visible = false
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_28lys")
+skeleton = NodePath("../../..")
+
+[node name="crouched_collision_shape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
+shape = SubResource("CapsuleShape3D_4lhob")
+debug_color = Color(2.69532e-06, 0.791304, 0.92051, 0.42)
+
+[node name="head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.651091, 0)
+
+[node name="eye" type="Node3D" parent="head"]
+
+[node name="Camera3D" type="Camera3D" parent="head/eye"]
+
+[node name="obstacle_check" type="Node3D" parent="head"]
+
+[node name="obstacle_checker" type="ShapeCast3D" parent="head/obstacle_check"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.873617, 0)
+shape = SubResource("SphereShape3D_iki0w")
+debug_shape_custom_color = Color(0, 1, 0, 1)
+
+[node name="UI" type="Node" parent="."]
+
+[node name="player_movement_Debugger" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="player_states_and_speed" type="VBoxContainer" parent="UI/player_movement_Debugger"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="state" type="Label" parent="UI/player_movement_Debugger/player_states_and_speed"]
+layout_mode = 2
+text = "Player state"
+
+[node name="speed_label" type="Label" parent="UI/player_movement_Debugger/player_states_and_speed"]
+layout_mode = 2
+text = "SPEED:"
+
+[node name="PLAYER_ANIMATION" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_k1axc")
+}
