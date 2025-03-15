@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://bodwmh0ukym74"]
+[gd_scene load_steps=74 format=3 uid="uid://bodwmh0ukym74"]
 
 [ext_resource type="PackedScene" uid="uid://belw3mvkg448y" path="res://demo_scene/tube_light.tscn" id="1_ji0hm"]
 [ext_resource type="Texture2D" uid="uid://b12m8t5aqws41" path="res://materials and textures/Sky boxes/free_-_skybox_basic_sky_0.jpg" id="1_yl0jj"]
@@ -21,10 +21,10 @@
 [ext_resource type="Texture2D" uid="uid://cjrtvnmpjf64h" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_COL_1K.jpg" id="9_fb81p"]
 [ext_resource type="Texture2D" uid="uid://cqg23akm26rr2" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_AO_1K.jpg" id="10_myioq"]
 [ext_resource type="Texture2D" uid="uid://dpfluxuqkqsuo" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_DISP_1K.jpg" id="11_03kjn"]
-[ext_resource type="Texture2D" uid="uid://b65xjc76xns46" path="res://materials and textures/GreyboxTextures/greybox_grey_grid.png" id="11_aujeh"]
 [ext_resource type="Texture2D" uid="uid://baiqiuuaas4j5" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_NRM_1K.png" id="12_11sxq"]
 [ext_resource type="Texture2D" uid="uid://bpmyo10ciep3v" path="res://materials and textures/GreyboxTextures/greybox_orange_grid.png" id="12_71gk5"]
 [ext_resource type="Texture2D" uid="uid://f60pdolvbaxe" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_REFL_1K.jpg" id="13_ux7mi"]
+[ext_resource type="Material" uid="uid://ip4240m6psmu" path="res://materials and textures/coneblue.tres" id="26_shjfy"]
 [ext_resource type="PackedScene" uid="uid://8pv5dj2wmaf0" path="res://player/fps_player_1_controller.tscn" id="29_b64sm"]
 [ext_resource type="Material" uid="uid://c3fvba4yl0uwj" path="res://materials and textures/new_standard_material_3d.tres" id="34_v1pqr"]
 
@@ -41,6 +41,7 @@ background_mode = 2
 background_energy_multiplier = 0.8
 sky = SubResource("Sky_ghcnm")
 sky_rotation = Vector3(3.14159, 0, 0)
+ambient_light_sky_contribution = 0.7
 tonemap_mode = 3
 tonemap_white = 5.0
 sdfgi_use_occlusion = true
@@ -49,8 +50,6 @@ sdfgi_max_distance = 3276.8
 sdfgi_y_scale = 2
 glow_enabled = true
 glow_normalized = true
-
-[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_jtvph"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_k11l4"]
 lightmap_size_hint = Vector2i(704, 366)
@@ -186,9 +185,9 @@ add_uv2 = true
 size = Vector3(8.9, 4.25, 0.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_37254"]
-lightmap_size_hint = Vector2i(27, 51)
+lightmap_size_hint = Vector2i(24, 42)
 add_uv2 = true
-size = Vector3(1.36, 2.89, 3.3)
+size = Vector3(1.2, 2.225, 2.84)
 
 [sub_resource type="BoxMesh" id="BoxMesh_154w6"]
 lightmap_size_hint = Vector2i(18, 39)
@@ -217,9 +216,6 @@ radius = 1.7
 height = 1.09
 radial_segments = 20
 rings = 10
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v4472"]
-albedo_texture = ExtResource("11_aujeh")
 
 [sub_resource type="BoxMesh" id="BoxMesh_st13t"]
 lightmap_size_hint = Vector2i(108, 136)
@@ -301,14 +297,13 @@ radial_segments = 25
 [node name="prototyping level" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.618525, -0.490823, -0.613612, -0.00707983, -0.78436, 0.620266, -0.785733, -0.379306, -0.488622, -42.754, 10.7828, -35.5051)
+transform = Transform3D(0.61677, -0.420277, -0.665553, 0.0470919, -0.824314, 0.56417, -0.785733, -0.379306, -0.488621, -42.754, 10.7828, -35.5051)
 light_color = Color(1, 1, 0.890196, 1)
 light_bake_mode = 1
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_lbnij")
-camera_attributes = SubResource("CameraAttributesPractical_jtvph")
 
 [node name="Base" type="Node3D" parent="."]
 
@@ -498,12 +493,13 @@ use_collision = true
 
 [node name="CSGMesh3D" type="CSGMesh3D" parent="cave/CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-material_override = SubResource("StandardMaterial3D_v4472")
+material_override = ExtResource("2_5lue8")
 use_collision = true
 mesh = SubResource("BoxMesh_st13t")
 
 [node name="CSGMesh3D2" type="CSGMesh3D" parent="cave/CSGCombiner3D/CSGMesh3D"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.178251, 0.368868, 0)
+material_override = ExtResource("2_5lue8")
 operation = 2
 mesh = SubResource("CylinderMesh_hpbjt")
 
@@ -557,16 +553,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.1586, 0, 0)
 
 [node name="CSGMesh3D" type="CSGMesh3D" parent="props/Cover_props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19748, -0.163038)
+material_override = ExtResource("26_shjfy")
 mesh = SubResource("BoxMesh_j5sbu")
 
 [node name="CSGMesh3D4" type="CSGMesh3D" parent="props/Cover_props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.94597, 1.42922, -0.163038)
-material_override = ExtResource("34_v1pqr")
+material_override = ExtResource("26_shjfy")
 mesh = SubResource("BoxMesh_wlby1")
 
 [node name="CSGMesh3D2" type="CSGMesh3D" parent="props/Cover_props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.16604, 2.50888, -0.163038)
-material_override = ExtResource("34_v1pqr")
+material_override = ExtResource("26_shjfy")
 mesh = SubResource("CylinderMesh_l33yw")
 
 [node name="CSGMesh3D5" type="CSGMesh3D" parent="props/Cover_props"]
@@ -575,7 +572,7 @@ mesh = SubResource("CylinderMesh_l33yw")
 
 [node name="CSGMesh3D3" type="CSGMesh3D" parent="props/Cover_props"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.6707, 2.50888, 1.54924)
-material_override = ExtResource("34_v1pqr")
+material_override = ExtResource("26_shjfy")
 mesh = SubResource("CylinderMesh_l33yw")
 
 [node name="Shooting_arema" type="Node3D" parent="."]

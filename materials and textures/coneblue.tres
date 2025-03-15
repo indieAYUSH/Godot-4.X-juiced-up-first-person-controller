@@ -1,6 +1,6 @@
 [gd_resource type="StandardMaterial3D" load_steps=5 format=3 uid="uid://ip4240m6psmu"]
 
-[ext_resource type="Texture2D" uid="uid://cb51kxfmk8qey" path="res://prototyping/assests/GreyboxTextures/GreyboxTextures/greybox_blue_solid.png" id="1_q83l4"]
+[ext_resource type="Texture2D" uid="uid://bj0mox3qv6vdl" path="res://materials and textures/GreyboxTextures/greybox_red_solid.png" id="1_bapiu"]
 
 [sub_resource type="Gradient" id="Gradient_mlfbv"]
 offsets = PackedFloat32Array(0, 0.760563, 1)
@@ -24,7 +24,7 @@ noise = SubResource("FastNoiseLite_fmh8u")
 diffuse_mode = 3
 specular_mode = 1
 albedo_color = Color(0.93408, 0.93408, 0.93408, 1)
-albedo_texture = ExtResource("1_q83l4")
+albedo_texture = ExtResource("1_bapiu")
 normal_scale = 2.62
 normal_texture = SubResource("NoiseTexture2D_lic1r")
 uv1_triplanar = true
