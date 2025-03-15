@@ -2,7 +2,7 @@ class_name PLAYER_MOVEMENT
 extends CharacterBody3D
 
 @export_group("gamejuice_things")
-@export var sprint_fov: float = 30
+@export var sprint_fov: float = 20
 @export var camera_fov_default: float = 75.0
 
 
@@ -89,14 +89,12 @@ func _unhandled_input(event):
 func _physics_process(delta):
 	PLAYER_SPEED = self.velocity.length()
 	speed_label.text = "SPEED: " + str(PLAYER_SPEED)
-
 	# Apply gravity
 	if not is_on_floor():
 		velocity.y -= 9.8 * delta
 		player_state = "IN AIR"
 	else:
 		player_state = "IDLE"  # Default state
-
 	# Handle jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
@@ -104,7 +102,6 @@ func _physics_process(delta):
 	# Process movement input
 	var input_dir = Input.get_vector("left", "right", "forward", "backward")
 	direction = lerp(direction, (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized(), lerp_speed * delta)
-
 	# Determine movement state before applying speed changes
 	var dir_length = direction.length()
 	if dir_length > 0.1:
@@ -113,7 +110,6 @@ func _physics_process(delta):
 	else:
 		WALKING = false
 		IDLE = true
-
 	# Apply movement velocity
 	if direction:
 		velocity.x = direction.x * SPEED
@@ -121,7 +117,6 @@ func _physics_process(delta):
 	else:
 		velocity.x = 0.0
 		velocity.z = 0.0
-
 	move_and_slide()
 	# Handle sprinting and crouching before final state decision
 	_sprint(delta)
@@ -133,8 +128,11 @@ func _physics_process(delta):
 #SPRINTING_AND_CROUCHING_RELATED_HANDLES
 	if !CROUCHING and !SPRINTING:
 		SPEED= walking_speed
+		camera.fov = lerp(camera.fov , camera_fov_default , delta * lerp_speed)
+
 
 # SPRINTING_AND_CROUCHING
+
 func _crouch(delta):
 	if Input.is_action_pressed("crouch"):
 		SPEED = crouch_walking_speed
