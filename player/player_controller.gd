@@ -2,8 +2,19 @@ class_name PLAYER_MOVEMENT
 extends CharacterBody3D
 
 @export_group("gamejuice_things")
-@export var sprint_fov: float = 20
+@export var sprint_fov: float = 30
 @export var camera_fov_default: float = 75.0
+
+
+
+#NODES
+@onready var un_crouched_collision_shape = $un_crouched_collision_shape
+@onready var crouched_collision_shape = $crouched_collision_shape
+@onready var obstacle_checker = $head/obstacle_check/obstacle_checker
+@onready var camera = $head/eye/Camera3D
+@onready var head = $head
+@onready var eye = $head/eye
+
 
 # Debug variables
 var PLAYER_SPEED = self.velocity.length()
@@ -17,13 +28,12 @@ var PLAYER_SPEED = self.velocity.length()
 @export var SPRINTING: bool = false
 @export var IDLE: bool = true
 @export var SHOOTING: bool = false
+@export var SLIDING : bool = false
 @export var player_state: String = "IDLE"
 var direction = Vector3.ZERO
 
 # Nodes
 @export_group("MOVEMENT_VARIABLE")
-@onready var camera = $head/eye/Camera3D
-@onready var head = $head
 
 # Movement Variables
 @export_group("MOVEMENT_VARIABLE")
@@ -39,13 +49,23 @@ const JUMP_VELOCITY = 4.5
 
 # CROUCHING_HANDLES
 @export var crouching_depth: float = -0.6
-@onready var un_crouched_collision_shape = $un_crouched_collision_shape
-@onready var crouched_collision_shape = $crouched_collision_shape
-@onready var obstacle_checker = $head/obstacle_check/obstacle_checker
+
 
 # VARIABLE_FOR_PROCEDURAL_ANIMATION
 @export_group("Animation_Things")
 @export var lerp_speed: float = 15.0
+  #head_bob_things
+const  head_bobing_sprinting_speed : float = 22.0
+const  head_bobing_walking_speed : float = 14.0
+const  head_bobing_crouching_speed : float = 8.0
+
+const   head_bobing_sprinting_intensity: float = 0.4
+const   head_bobing_walking_intensity: float = 0.2
+const   head_bobing_crouching_intensity: float = 0.1
+
+var head_bob_vector : Vector2 = Vector2.ZERO
+var head_bobing_index: float = 0.0
+var head_bobing_current_intensity : float = 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -86,18 +106,13 @@ func _physics_process(delta):
 	direction = lerp(direction, (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized(), lerp_speed * delta)
 
 	# Determine movement state before applying speed changes
-	if direction.length() > 0.1:
+	var dir_length = direction.length()
+	if dir_length > 0.1:
 		WALKING = true
 		IDLE = false
 	else:
 		WALKING = false
 		IDLE = true
-
-	# Handle sprinting and crouching before final state decision
-	_sprint(delta)
-	_crouch(delta)
-	_state_manager()
-	state.text = "State: " + player_state  # Debug text update
 
 	# Apply movement velocity
 	if direction:
@@ -108,6 +123,13 @@ func _physics_process(delta):
 		velocity.z = 0.0
 
 	move_and_slide()
+	# Handle sprinting and crouching before final state decision
+	_sprint(delta)
+	_crouch(delta)
+	_state_manager(delta)
+	state.text = "State: " + player_state  # Debug text update
+	#head_bob
+	_head_bobing_manager(delta)
 #SPRINTING_AND_CROUCHING_RELATED_HANDLES
 	if !CROUCHING and !SPRINTING:
 		SPEED= walking_speed
@@ -138,13 +160,31 @@ func _sprint(delta):
 
 
 
-func _state_manager() : 
-		# Prioritize states: Sprinting > Crouching > Walking > Idle
+func _state_manager(delta) : 
+#head_boband _states
+	# Prioritize states: Sprinting > Crouching > Walking > Idle
 	if SPRINTING:
 		player_state = "Sprinting"
+		head_bobing_index += head_bobing_sprinting_speed*delta
+		head_bobing_current_intensity = head_bobing_sprinting_intensity
 	elif CROUCHING:
 		player_state = "Crouched"
+		head_bobing_index += head_bobing_crouching_speed*delta
+		head_bobing_current_intensity = head_bobing_crouching_intensity
 	elif WALKING:
 		player_state = "Walking"
+		head_bobing_index += head_bobing_walking_speed*delta
+		head_bobing_current_intensity = head_bobing_walking_intensity
 	else:
 		player_state = "Idle"
+		head_bobing_index = 0.0
+		head_bobing_current_intensity = 0.0
+
+
+func  _head_bobing_manager(delta):
+	if direction.length() > 0.1 and !SLIDING and is_on_floor():
+		head_bob_vector.y = sin(head_bobing_index)*head_bobing_current_intensity 
+		head_bob_vector.x = sin(head_bobing_index/2.0) *head_bobing_current_intensity + 0.5
+		
+		eye.position.y = lerp(eye.position.y , head_bob_vector.y/2.0 , delta*lerp_speed)
+		eye.position.x = lerp(eye.position.x, head_bob_vector.x , delta*lerp_speed)
