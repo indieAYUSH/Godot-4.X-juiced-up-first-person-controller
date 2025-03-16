@@ -179,8 +179,9 @@ _data = {
 
 [node name="CharacterBody3D" type="CharacterBody3D"]
 script = ExtResource("1_iki0w")
+animation_player_speed = 1.25
 sensitivity = 0.14
-lerp_speed = 13.0
+lerp_speed = 10.0
 
 [node name="un_crouched_collision_shape" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_iki0w")

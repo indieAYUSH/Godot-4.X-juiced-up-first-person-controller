@@ -1,8 +1,8 @@
 # PLAYER_MOVEMENT.gd
 # ------------------------------------------------------------------------------
 # This script controls 3D player movement for a first-person game. It manages:
-# - Movement states (walking, sprinting, crouching, jumping, idle , sliding)
-# - Visual effects (camera FOV changes, head bobbing ,rolling)
+# - Movement states (walking, sprinting, crouching, jumping, idle, sliding)
+# - Visual effects (camera FOV changes, head bobbing, rolling)
 # - Animation triggers based on movement and state transitions
 # ------------------------------------------------------------------------------
 class_name PLAYER_MOVEMENT
@@ -16,7 +16,7 @@ extends CharacterBody3D
 @export_group("gamejuice_things")
 @export var sprint_fov: float = 15                   # Additional FOV when sprinting
 @export var camera_fov_default: float = 75.0         # Default camera field-of-view
-@export var animation_player_speed : float = 1.0     # speed_of_animation
+@export var animation_player_speed : float = 1.0     # Speed of animations
 
 # --- Movement Speeds & Parameters ---
 @export_group("MOVEMENT_VARIABLE")
@@ -33,6 +33,13 @@ const JUMP_VELOCITY = 4.5                           # Impulse strength for jumpi
 # --- Crouching Settings ---
 @export var crouching_depth: float = -0.6           # Head lowering value during crouch
 
+#========== SLIDE VAR =========#
+var slide_timer : float = 0.0
+@export var slide_timer_max : float = 1.0
+var slide_dir: Vector2 = Vector2.ZERO
+var sliding_speed: float = 13.0
+var slide_tilt :float = -8.0
+
 # --- Head Bobbing & Animation ---
 @export_group("Animation_Things")
 @export var lerp_speed: float = 15.0                # Lerp factor for smooth transitions
@@ -42,7 +49,6 @@ const head_bobing_crouching_speed : float = 8.0      # Bobbing speed multiplier 
 const head_bobing_sprinting_intensity: float = 0.4   # Bobbing intensity (sprinting)
 const head_bobing_walking_intensity: float = 0.2     # Bobbing intensity (walking)
 const head_bobing_crouching_intensity: float = 0.1   # Bobbing intensity (crouching)
-
 
 # --- Node References ---
 @onready var un_crouched_collision_shape = $un_crouched_collision_shape  # Collision shape (standing)
@@ -136,6 +142,7 @@ func _physics_process(delta):
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		player_animation.play("jump")
 		velocity.y = JUMP_VELOCITY
+		SLIDING = false
 
 	# ----- Movement Input -----
 	input_dir = Input.get_vector("left", "right", "forward", "backward")
@@ -153,9 +160,15 @@ func _physics_process(delta):
 		WALKING = false
 		IDLE = true
 	
-	# ----- Apply Movement -----
-	velocity.x = direction.x * SPEED if direction else 0.0
-	velocity.z = direction.z * SPEED if direction else 0.0
+	#===== APPLYING SLIDE MOVEMENT =====#
+	if SLIDING:
+		velocity.x = direction.x * (slide_timer + 0.1) * sliding_speed  
+		velocity.z = direction.z * (slide_timer + 0.1) * sliding_speed  
+	else:
+		# ----- Apply Standard Movement -----
+		velocity.x = direction.x * SPEED if direction else 0.0
+		velocity.z = direction.z * SPEED if direction else 0.0
+
 	LAST_VELOCITY = velocity
 	move_and_slide()
 	
@@ -164,18 +177,20 @@ func _physics_process(delta):
 	_crouch(delta)
 	_state_manager(delta)
 	_head_bobing_manager(delta)
+	_slide(delta)
 	state.text = "State: " + player_state
 	
 	# Reset to walking speed and default FOV if neither sprinting nor crouching.
-	if !CROUCHING and !SPRINTING:
+	if not CROUCHING and not SPRINTING and !SLIDING:
 		SPEED = walking_speed
 		camera.fov = lerp(camera.fov, camera_fov_default, delta * lerp_speed)
-	#___________---------------------------------sideway animtion
+	
+	# ----- Sideway Animation Handling -----
 	_handle_sideway_animation()
 
 # --- _crouch: Manage Crouching ---
 func _crouch(delta):
-	if Input.is_action_pressed("crouch"):
+	if Input.is_action_pressed("crouch") or SLIDING:
 		SPEED = crouch_walking_speed
 		CROUCHING = true
 		# Lower camera FOV slightly for crouching.
@@ -184,7 +199,13 @@ func _crouch(delta):
 		head.position.y = lerp(head.position.y, crouching_depth + 0.651, delta * lerp_speed)
 		crouched_collision_shape.disabled = false
 		un_crouched_collision_shape.disabled = true
-	elif !obstacle_checker.is_colliding():
+		# -------- SLIDE MANAGEMENT --------
+		if SPRINTING and input_dir != Vector2.ZERO:
+			SLIDING = true
+			slide_dir = input_dir
+			slide_timer = slide_timer_max
+			print("can_slide")
+	elif not obstacle_checker.is_colliding():
 		# Stand up if no obstacle overhead.
 		CROUCHING = false
 		head.position.y = lerp(head.position.y, 0.651, delta * lerp_speed)
@@ -194,7 +215,7 @@ func _crouch(delta):
 # --- _sprint: Manage Sprinting ---
 func _sprint(delta):
 	# Sprint if moving forward, walking, not crouching, and on the ground.
-	if Input.is_action_pressed("sprint") and WALKING and not CROUCHING and is_on_floor() and input_dir.y == -1:
+	if Input.is_action_pressed("sprint") and WALKING and not CROUCHING and is_on_floor() and input_dir.y == -1 :
 		SPEED = sprinting_speed
 		SPRINTING = true
 		# Widen camera FOV during sprint.
@@ -224,7 +245,7 @@ func _state_manager(delta):
 
 # --- _head_bobing_manager: Calculate and Apply Head Bobbing ---
 func _head_bobing_manager(delta):
-	if direction.length() > 0.1 and !SLIDING and is_on_floor():
+	if direction.length() > 0.1 and not SLIDING and is_on_floor():
 		# Compute vertical and horizontal bobbing offsets.
 		head_bob_vector.y = sin(head_bobing_index) * head_bobing_current_intensity
 		head_bob_vector.x = sin(head_bobing_index / 2.0) * head_bobing_current_intensity + 0.5
@@ -232,9 +253,21 @@ func _head_bobing_manager(delta):
 		eye.position.y = lerp(eye.position.y, head_bob_vector.y / 2.0, delta * lerp_speed)
 		eye.position.x = lerp(eye.position.x, head_bob_vector.x, delta * lerp_speed)
 
-#-----handling_sideway animation
+# ----- Handling Sideway Animation -----
 func _handle_sideway_animation():
 	if input_dir.x == 1.0:
-		player_animation.play("side_way_movement_right" , animation_player_speed)
+		player_animation.play("side_way_movement_right", animation_player_speed)
 	if input_dir.x == -1.0:
-		player_animation.play("side_way_movement_left" , animation_player_speed)
+		player_animation.play("side_way_movement_left", animation_player_speed)
+
+# ================== SLIDE MANAGEMENT =================#
+func _slide(delta):
+	if SLIDING:
+		slide_timer -= delta
+		camera.rotation.z = lerp(camera.rotation.z , -deg_to_rad(slide_tilt) , delta*lerp_speed)
+		camera.fov = lerp(camera.fov , 25 + camera_fov_default, delta * lerp_speed)
+		if slide_timer <= 0:
+			SLIDING = false
+			camera.rotation.z = lerp(eye.rotation.x , 0.0  , delta *lerp_speed)
+			print("slide ended")
+			print(slide_dir)
