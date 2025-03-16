@@ -1,4 +1,4 @@
-[gd_scene load_steps=74 format=3 uid="uid://bodwmh0ukym74"]
+[gd_scene load_steps=76 format=3 uid="uid://bodwmh0ukym74"]
 
 [ext_resource type="PackedScene" uid="uid://belw3mvkg448y" path="res://demo_scene/tube_light.tscn" id="1_ji0hm"]
 [ext_resource type="Texture2D" uid="uid://b12m8t5aqws41" path="res://materials and textures/Sky boxes/free_-_skybox_basic_sky_0.jpg" id="1_yl0jj"]
@@ -25,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://bpmyo10ciep3v" path="res://materials and textures/GreyboxTextures/greybox_orange_grid.png" id="12_71gk5"]
 [ext_resource type="Texture2D" uid="uid://f60pdolvbaxe" path="res://materials and textures/TilesCeramicHerringbone002/TilesCeramicHerringbone002_REFL_1K.jpg" id="13_ux7mi"]
 [ext_resource type="Material" uid="uid://ip4240m6psmu" path="res://materials and textures/coneblue.tres" id="26_shjfy"]
+[ext_resource type="PackedScene" uid="uid://bqns0s086d6ov" path="res://demo_scene/lamp.tscn" id="27_gk051"]
 [ext_resource type="PackedScene" uid="uid://8pv5dj2wmaf0" path="res://player/fps_player_1_controller.tscn" id="29_b64sm"]
 [ext_resource type="Material" uid="uid://c3fvba4yl0uwj" path="res://materials and textures/new_standard_material_3d.tres" id="34_v1pqr"]
 
@@ -41,15 +42,17 @@ background_mode = 2
 background_energy_multiplier = 0.8
 sky = SubResource("Sky_ghcnm")
 sky_rotation = Vector3(3.14159, 0, 0)
-ambient_light_sky_contribution = 0.7
+ambient_light_sky_contribution = 0.6
 tonemap_mode = 3
 tonemap_white = 5.0
 sdfgi_use_occlusion = true
-sdfgi_cascades = 8
-sdfgi_max_distance = 3276.8
-sdfgi_y_scale = 2
+sdfgi_cascades = 5
+sdfgi_min_cell_size = 1.29473
+sdfgi_cascade0_distance = 82.8625
+sdfgi_max_distance = 2651.6
 glow_enabled = true
 glow_normalized = true
+glow_bloom = 0.22
 
 [sub_resource type="BoxMesh" id="BoxMesh_k11l4"]
 lightmap_size_hint = Vector2i(704, 366)
@@ -108,10 +111,10 @@ material = SubResource("StandardMaterial3D_0s1vk")
 size = Vector3(10, 0.3, 3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_k1i2g"]
-lightmap_size_hint = Vector2i(359, 414)
+lightmap_size_hint = Vector2i(259, 314)
 material = ExtResource("3_hm2d6")
 add_uv2 = true
-size = Vector3(70, 5.8, 1)
+size = Vector3(50, 5.8, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_6nvce"]
 lightmap_size_hint = Vector2i(359, 414)
@@ -122,6 +125,12 @@ size = Vector3(1, 5.8, 70)
 [sub_resource type="BoxMesh" id="BoxMesh_bvvy0"]
 material = ExtResource("3_hm2d6")
 size = Vector3(1, 5.8, 70)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gk051"]
+lightmap_size_hint = Vector2i(359, 414)
+material = ExtResource("3_hm2d6")
+add_uv2 = true
+size = Vector3(70, 5.8, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_fta2c"]
 size = Vector3(12, 1, 1)
@@ -316,7 +325,7 @@ use_collision = true
 mesh = SubResource("BoxMesh_k11l4")
 
 [node name="different suracs" type="Node3D" parent="Base"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.185299, -25.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.19083, -0.915569, -25.5)
 
 [node name="Dirt" type="CSGMesh3D" parent="Base/different suracs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.518313, 0)
@@ -337,7 +346,7 @@ mesh = SubResource("BoxMesh_22ysh")
 use_collision = true
 
 [node name="wall_boundary" type="CSGMesh3D" parent="Boundary wall/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 34.6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 3, 34.6)
 use_collision = true
 mesh = SubResource("BoxMesh_k1i2g")
 
@@ -355,7 +364,7 @@ material = ExtResource("3_scu4f")
 [node name="wall_blundary" type="CSGMesh3D" parent="Boundary wall/CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -34.6)
 use_collision = true
-mesh = SubResource("BoxMesh_k1i2g")
+mesh = SubResource("BoxMesh_gk051")
 
 [node name="wall_for_jump_mechanis" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.5, 0, -17.5)
@@ -575,20 +584,111 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.6707, 2.50888, 1.54924)
 material_override = ExtResource("26_shjfy")
 mesh = SubResource("CylinderMesh_l33yw")
 
-[node name="Shooting_arema" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.5209, 0, 27.4089)
+[node name="arena" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.371, 0, 52.7783)
 
-[node name="st_h" type="Node3D" parent="Shooting_arema"]
+[node name="st_h" type="Node3D" parent="arena"]
 
-[node name="CSGCombiner3D" type="CSGCombiner3D" parent="Shooting_arema/st_h"]
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="arena/st_h"]
+use_collision = true
 
-[node name="CSGBox3D" type="CSGBox3D" parent="Shooting_arema/st_h/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04468, -1.09534)
-size = Vector3(1, 1.37256, 15.7034)
+[node name="CSGBox3D" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -8.66099, 17.6313)
+size = Vector3(20, 1, 70.3069)
+material = ExtResource("2_5lue8")
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="Shooting_arema/st_h/CSGCombiner3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.12367, 3.09419, -8.76424)
-size = Vector3(22.9653, 5.62561, 0.813293)
+[node name="cieling" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.672132, 25.9537)
+size = Vector3(20, 1, 53.662)
+material = ExtResource("2_5lue8")
+
+[node name="cl" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.148914, 0.672132, 20.2204)
+operation = 2
+size = Vector3(7.88884, 1.805, 12.911)
+material = ExtResource("2_5lue8")
+
+[node name="areana_boudary_wall" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, -3.96655, 17.5475)
+size = Vector3(1, 8.93311, 70.9661)
+material = ExtResource("2_5lue8")
+
+[node name="areana_boudary_wall2" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -3.967, 17.8432)
+size = Vector3(1, 8.93311, 70.3742)
+material = ExtResource("2_5lue8")
+
+[node name="window_left" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, -10, -4.12893, 26.1981)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window_left2" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, -10, -4.12893, 11.8933)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window_left3" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, -9.82706, -4.15739, 49.9389)
+operation = 2
+size = Vector3(2.66, 2.569, 3.86458)
+material = ExtResource("2_5lue8")
+
+[node name="window_left4" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, -10, -4.12893, 36.8713)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, 10, -4.12893, 26.1981)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window2" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, 10, -4.12893, 11.8933)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window3" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, 10, -4.12893, 51.1761)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="window4" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(0.979113, 0.162431, -0.122285, -0.161178, 0.98672, 0.0201301, 0.123931, 0, 0.992291, 10, -4.12893, 36.8713)
+operation = 2
+size = Vector3(2.66, 2.569, 6.69303)
+material = ExtResource("2_5lue8")
+
+[node name="areana_boudary_wall3" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00282288, -3.8656, 52.3833)
+size = Vector3(19.1861, 8.7312, 1)
+material = ExtResource("2_5lue8")
+
+[node name="areana_boudary_wall4" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00282288, -0.540283, -0.385445)
+size = Vector3(19.1861, 2.08057, 1)
+material = ExtResource("2_5lue8")
+
+[node name="areana_boudary_wall5" type="CSGBox3D" parent="arena/st_h/CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00282288, -4.12128, -17.6605)
+size = Vector3(19.1861, 9.24255, 1)
+material = ExtResource("2_5lue8")
+
+[node name="lamp" parent="arena/st_h/CSGCombiner3D" instance=ExtResource("27_gk051")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.884026, -0.31578, 40.4645)
+
+[node name="lamp2" parent="arena/st_h/CSGCombiner3D" instance=ExtResource("27_gk051")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.884026, -0.786656, 9.83273)
+
+[node name="lamp3" parent="arena/st_h/CSGCombiner3D" instance=ExtResource("27_gk051")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.59209, -4.94785, -5.04697)
 
 [node name="player" type="Node3D" parent="."]
 
