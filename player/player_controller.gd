@@ -58,6 +58,7 @@ const head_bobing_crouching_intensity: float = 0.1   # Bobbing intensity (crouch
 @onready var head = $head                                                 # Head node (for rotation/position)
 @onready var eye = $head/eye                                              # Eye node (for head bobbing)
 @onready var player_animation  = $PLAYER_ANIMATION                        # Animation player node
+@onready var character_body_3d = $"."
 
 # --- Debug Displays ---
 var PLAYER_SPEED = self.velocity.length()            # Current speed for debugging
@@ -77,6 +78,7 @@ var PLAYER_SPEED = self.velocity.length()            # Current speed for debuggi
 @export var SHOOTING: bool = false
 @export var SLIDING : bool = false
 @export var player_state: String = "IDLE"              # Descriptive state for debugging
+var can_sprint  : bool = false
 
 # --- Direction & Input ---
 var direction = Vector3.ZERO                        # 3D movement direction vector
@@ -187,6 +189,9 @@ func _physics_process(delta):
 	
 	# ----- Sideway Animation Handling -----
 	_handle_sideway_animation()
+	
+	#===========================SPRINT SHITS
+ 
 
 # --- _crouch: Manage Crouching ---
 func _crouch(delta):
