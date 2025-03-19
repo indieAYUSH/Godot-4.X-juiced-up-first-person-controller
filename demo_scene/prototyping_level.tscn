@@ -1,5 +1,6 @@
-[gd_scene load_steps=76 format=3 uid="uid://bodwmh0ukym74"]
+[gd_scene load_steps=77 format=3 uid="uid://bodwmh0ukym74"]
 
+[ext_resource type="Script" uid="uid://c1y8dg0mjl6ln" path="res://demo_scene/prototyping_level.gd" id="1_8454g"]
 [ext_resource type="PackedScene" uid="uid://belw3mvkg448y" path="res://demo_scene/tube_light.tscn" id="1_ji0hm"]
 [ext_resource type="Texture2D" uid="uid://b12m8t5aqws41" path="res://materials and textures/Sky boxes/free_-_skybox_basic_sky_0.jpg" id="1_yl0jj"]
 [ext_resource type="Material" uid="uid://b3q078b2j4dmq" path="res://materials and textures/red.tres" id="2_5lue8"]
@@ -304,6 +305,7 @@ height = 4.0
 radial_segments = 25
 
 [node name="prototyping level" type="Node3D"]
+script = ExtResource("1_8454g")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.61677, -0.420277, -0.665553, 0.0470919, -0.824314, 0.56417, -0.785733, -0.379306, -0.488621, -42.754, 10.7828, -35.5051)

@@ -11,6 +11,9 @@ extends CharacterBody3D
 # ==============================================================================
 #                          GLOBAL CONFIGURATION
 # ==============================================================================
+#======GRAVITY=============#
+@export var gravity : float = 9.8
+
 
 # --- Visual Effects Settings ---
 @export_group("gamejuice_things")
@@ -20,11 +23,11 @@ extends CharacterBody3D
 
 # --- Movement Speeds & Parameters ---
 @export_group("MOVEMENT_VARIABLE")
-var SPEED: float = 5.0                              # Active movement speed
+var SPEED: float = 0.0                              # Active movement speed
 @export var walking_speed: float = 7.0              # Speed when walking
 @export var crouch_walking_speed: float = 5.0       # Speed when crouching
 @export var sprinting_speed: float = 10.5           # Speed when sprinting
-const JUMP_VELOCITY = 4.5                           # Impulse strength for jumping
+@export var JUMP_VELOCITY = 5.5                           # Impulse strength for jumping
 
 # --- Mouse & Camera Settings ---
 @export var sensitivity: float = 0.01               # Mouse look sensitivity
@@ -37,8 +40,8 @@ const JUMP_VELOCITY = 4.5                           # Impulse strength for jumpi
 var slide_timer : float = 0.0
 @export var slide_timer_max : float = 1.0
 var slide_dir: Vector2 = Vector2.ZERO
-var sliding_speed: float = 13.0
-var slide_tilt :float = -8.0
+@export var sliding_speed: float = 13.0
+@export var slide_tilt :float = -8.0
 
 # --- Head Bobbing & Animation ---
 @export_group("Animation_Things")
@@ -71,12 +74,12 @@ var PLAYER_SPEED = self.velocity.length()            # Current speed for debuggi
 
 # --- Player State Booleans ---
 @export_group("Player_states")
-@export var WALKING: bool = false
-@export var CROUCHING: bool = false
-@export var SPRINTING: bool = false
-@export var IDLE: bool = true
-@export var SHOOTING: bool = false
-@export var SLIDING : bool = false
+var WALKING: bool = false
+var CROUCHING: bool = false
+var SPRINTING: bool = false
+var IDLE: bool = true
+var SHOOTING: bool = false
+var SLIDING : bool = false
 @export var player_state: String = "IDLE"              # Descriptive state for debugging
 var can_sprint  : bool = false
 
@@ -129,7 +132,7 @@ func _physics_process(delta):
 	
 	# ----- Gravity and Landing -----
 	if not is_on_floor():
-		velocity.y -= 9.8 * delta
+		velocity.y -= gravity * delta
 		player_state = "IN AIR"
 	else:
 		player_state = "IDLE"
@@ -230,11 +233,15 @@ func _sprint(delta):
 
 # --- _state_manager: Update State & Head Bobbing Setup ---
 func _state_manager(delta):
-	# Prioritize: Sprint > Crouch > Walk > Idle.
+	# Prioritize: Sprint > Sliding > Crouch > Walk > Idle.
 	if SPRINTING:
 		player_state = "Sprinting"
 		head_bobing_index += head_bobing_sprinting_speed * delta
 		head_bobing_current_intensity = head_bobing_sprinting_intensity
+	elif  SLIDING:
+		player_state = "Sliding"
+		head_bobing_index += head_bobing_crouching_speed * delta*0
+		head_bobing_current_intensity = head_bobing_crouching_intensity*0
 	elif CROUCHING:
 		player_state = "Crouched"
 		head_bobing_index += head_bobing_crouching_speed * delta

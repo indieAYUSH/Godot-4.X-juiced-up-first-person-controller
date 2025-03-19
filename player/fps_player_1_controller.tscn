@@ -1,21 +1,7 @@
-[gd_scene load_steps=16 format=3 uid="uid://8pv5dj2wmaf0"]
+[gd_scene load_steps=15 format=3 uid="uid://8pv5dj2wmaf0"]
 
 [ext_resource type="Script" uid="uid://cok0pia0ihhvo" path="res://player/player_controller.gd" id="1_iki0w"]
 [ext_resource type="Script" uid="uid://lckqksy0e078" path="res://player/fps.gd" id="2_nmcgq"]
-
-[sub_resource type="GDScript" id="GDScript_nmcgq"]
-script/source = "extends Node3D
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iki0w"]
 
@@ -191,71 +177,70 @@ _data = {
 &"side_way_movement_right": SubResource("Animation_fdb53")
 }
 
-[node name="Player_controller" type="Node3D"]
-script = SubResource("GDScript_nmcgq")
-
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
+[node name="CharacterBody3D" type="CharacterBody3D"]
 script = ExtResource("1_iki0w")
 sensitivity = 0.1
-lerp_speed = 10.0
+slide_timer_max = 1.2
+sliding_speed = 15.0
+lerp_speed = 9.0
 
-[node name="un_crouched_collision_shape" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="un_crouched_collision_shape" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_iki0w")
 debug_color = Color(2.69532e-06, 0.791304, 0.92051, 0.42)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D/un_crouched_collision_shape"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="un_crouched_collision_shape"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0079298, -2.38419e-07, 0.00433207)
 visible = false
 cast_shadow = 0
 mesh = SubResource("CapsuleMesh_28lys")
 skeleton = NodePath("../../..")
 
-[node name="crouched_collision_shape" type="CollisionShape3D" parent="CharacterBody3D"]
+[node name="crouched_collision_shape" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
 shape = SubResource("CapsuleShape3D_4lhob")
 debug_color = Color(2.69532e-06, 0.791304, 0.92051, 0.42)
 
-[node name="head" type="Node3D" parent="CharacterBody3D"]
+[node name="head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.651091, 0)
 
-[node name="eye" type="Node3D" parent="CharacterBody3D/head"]
+[node name="eye" type="Node3D" parent="head"]
 
-[node name="Camera3D" type="Camera3D" parent="CharacterBody3D/head/eye"]
+[node name="Camera3D" type="Camera3D" parent="head/eye"]
 
-[node name="obstacle_check" type="Node3D" parent="CharacterBody3D/head"]
+[node name="obstacle_check" type="Node3D" parent="head"]
 
-[node name="obstacle_checker" type="ShapeCast3D" parent="CharacterBody3D/head/obstacle_check"]
+[node name="obstacle_checker" type="ShapeCast3D" parent="head/obstacle_check"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.873617, 0)
 shape = SubResource("SphereShape3D_iki0w")
 debug_shape_custom_color = Color(0, 1, 0, 1)
 
-[node name="UI" type="Node" parent="CharacterBody3D"]
+[node name="UI" type="Node" parent="."]
 
-[node name="player_movement_Debugger" type="Control" parent="CharacterBody3D/UI"]
+[node name="player_movement_Debugger" type="Control" parent="UI"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="player_states_and_speed" type="VBoxContainer" parent="CharacterBody3D/UI/player_movement_Debugger"]
+[node name="player_states_and_speed" type="VBoxContainer" parent="UI/player_movement_Debugger"]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="state" type="Label" parent="CharacterBody3D/UI/player_movement_Debugger/player_states_and_speed"]
+[node name="state" type="Label" parent="UI/player_movement_Debugger/player_states_and_speed"]
 layout_mode = 2
 text = "Player state"
 
-[node name="speed_label" type="Label" parent="CharacterBody3D/UI/player_movement_Debugger/player_states_and_speed"]
+[node name="speed_label" type="Label" parent="UI/player_movement_Debugger/player_states_and_speed"]
 layout_mode = 2
 text = "SPEED:"
 
-[node name="fps" type="Label" parent="CharacterBody3D/UI/player_movement_Debugger/player_states_and_speed"]
+[node name="fps" type="Label" parent="UI/player_movement_Debugger/player_states_and_speed"]
 layout_mode = 2
 text = "SPEED:"
 script = ExtResource("2_nmcgq")
 
-[node name="PLAYER_ANIMATION" type="AnimationPlayer" parent="CharacterBody3D"]
+[node name="PLAYER_ANIMATION" type="AnimationPlayer" parent="."]
 libraries = {
 &"": SubResource("AnimationLibrary_k1axc")
 }
