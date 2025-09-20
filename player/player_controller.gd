@@ -261,6 +261,7 @@ func _head_bobing_manager(delta):
 		# Compute vertical and horizontal bobbing offsets.
 		head_bob_vector.y = sin(head_bobing_index) * head_bobing_current_intensity
 		head_bob_vector.x = sin(head_bobing_index / 2.0) * head_bobing_current_intensity + 0.5
+		print(head_bob_vector)
 		# Smoothly update eye position.
 		eye.position.y = lerp(eye.position.y, head_bob_vector.y / 2.0, delta * lerp_speed)
 		eye.position.x = lerp(eye.position.x, head_bob_vector.x, delta * lerp_speed)
